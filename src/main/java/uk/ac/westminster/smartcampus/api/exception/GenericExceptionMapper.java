@@ -9,13 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Provider
-public class GenericExceptionMapper implements ExceptionMapper<Exception> {
+public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
     @Override
-    public Response toResponse(Exception ex) {
+    public Response toResponse(Throwable ex) {
         if (ex instanceof WebApplicationException) {
             WebApplicationException wae = (WebApplicationException) ex;
-            // Allow 400 Bad Request (such as malformed JSON parsing crashes) to fall through 
-            // to our 500 global crash safety net.
+            // Allow 400 Bad Request to fall through to our 500 global crash safety net 
+            // if triggered by Jackson JSON parsing crashes as expected.
             if (wae.getResponse().getStatus() != 400) {
                 return wae.getResponse();
             }

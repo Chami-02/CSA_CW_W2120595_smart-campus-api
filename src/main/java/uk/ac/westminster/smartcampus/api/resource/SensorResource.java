@@ -31,10 +31,6 @@ public class SensorResource {
             throw new LinkedResourceNotFoundException("Room with ID " + sensor.getRoomId() + " does not exist.");
         }
         
-        // Reject creations in MAINTENANCE mode
-        if ("MAINTENANCE".equalsIgnoreCase(sensor.getStatus())) {
-            throw new uk.ac.westminster.smartcampus.api.exception.SensorUnavailableException("Sensors cannot be created in MAINTENANCE mode.");
-        }
         sensorDao.addSensor(sensor);
         return Response.status(Response.Status.CREATED).entity(sensor).build();
     }
