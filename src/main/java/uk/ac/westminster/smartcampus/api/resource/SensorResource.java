@@ -9,7 +9,7 @@ import uk.ac.westminster.smartcampus.api.exception.LinkedResourceNotFoundExcepti
 
 @Path("/sensors")
 public class SensorResource {
-    
+
     private final SensorDao sensorDao = SensorDao.getInstance();
     private final RoomDao roomDao = RoomDao.getInstance();
 
@@ -30,15 +30,24 @@ public class SensorResource {
         if (sensor.getRoomId() == null || !roomDao.roomExists(sensor.getRoomId())) {
             throw new LinkedResourceNotFoundException("Room with ID " + sensor.getRoomId() + " does not exist.");
         }
-        
+
         sensorDao.addSensor(sensor);
         return Response.status(Response.Status.CREATED).entity(sensor).build();
     }
 
-    // Sub-Resource Locator Pattern implementation dynamically resolving to ReadingResource
+    // Sub-Resource Locator Pattern implementation dynamically resolving to
+    // ReadingResource
     @Path("/{sensorId}/readings")
     public SensorReadingResource getSensorReadingResource(@PathParam("sensorId") String sensorId) {
         // Returning instance context without HTTP verb annotations
         return new SensorReadingResource(sensorId);
+    }
+
+    // Deliberate crash endpoint to test the Global Safety Net (500)
+    @GET
+    @Path("/crash")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response triggerCrash() {
+        throw new NullPointerException("Simulated NullPointerException to test the 500 safety net!");
     }
 }
