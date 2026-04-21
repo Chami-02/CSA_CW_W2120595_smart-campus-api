@@ -20,9 +20,10 @@ public class SensorRoom {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createRoom(Room room) {
+    public Response createRoom(Room room, @Context UriInfo uriInfo) {
         roomDao.addRoom(room);
-        return Response.status(Response.Status.CREATED).entity(room).build();
+        java.net.URI location = uriInfo.getAbsolutePathBuilder().path(room.getId()).build();
+        return Response.created(location).entity(room).build();
     }
 
     @GET
