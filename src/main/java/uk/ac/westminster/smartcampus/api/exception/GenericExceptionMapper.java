@@ -13,7 +13,12 @@ public class GenericExceptionMapper implements ExceptionMapper<Exception> {
     @Override
     public Response toResponse(Exception ex) {
         if (ex instanceof WebApplicationException) {
-            return ((WebApplicationException) ex).getResponse();
+            WebApplicationException wae = (WebApplicationException) ex;
+            // Allow 400 Bad Request (such as malformed JSON parsing crashes) to fall through 
+            // to our 500 global crash safety net.
+            if (wae.getResponse().getStatus() != 400) {
+                return wae.getResponse();
+            }
         }
 
         Map<String, String> errorEntity = new HashMap<>();
